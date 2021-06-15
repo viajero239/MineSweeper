@@ -1,17 +1,24 @@
 import sweeper.Box;
+import sweeper.Coord;
+import sweeper.Game;
+import sweeper.Ranges;
 
 import javax.swing.*;
 import java.awt.*;
 
 /* Наследование JFrame необходимо для создания простого оконного приложения. */
 public class JavaSweeper extends JFrame {
-    private final int COLS = 15;
-    private final int ROWS = 1;
+    private final int COLS = 9;
+    private final int ROWS = 9;
     private final int IMAGE_SIZE = 50;
+    private final int BOMBS = 10;
+    private Game game;
     private JPanel panel;
 
     /* Конструктор игры. */
     private JavaSweeper() {
+        game = new Game(COLS, ROWS, BOMBS);
+        game.start();
         /* Подгрузка изображений. */
         setImages();
         /* Сначала инициализируем панель. */
@@ -25,8 +32,6 @@ public class JavaSweeper extends JFrame {
     }
 
     private void initFrame() {
-        /* Выравнивание размера окна, чтобы поместились все объекты. */
-        pack();
         /* Автоматическое завершение выполнения программы при нажатии на крестик. */
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Java Sweeper");
@@ -37,6 +42,8 @@ public class JavaSweeper extends JFrame {
         setVisible(true);
         /* Установка иконки программы. */
         setIconImage(getImage("icon"));
+        /* Выравнивание размера окна, чтобы поместились все объекты. */
+        pack();
     }
 
     private void initPanel() {
@@ -45,15 +52,16 @@ public class JavaSweeper extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                for (Box box : Box.values()) {
-                    /* this - экземпляр отрисовки
-                     * box.ordinal() возвращает порядковый номер объекта в перечислении */
-                    g.drawImage((Image) box.image, box.ordinal() * IMAGE_SIZE, 0, this);
+                for (Coord coord : Ranges.getAllCoords()) {
+                    /* this - экземпляр отрисовки */
+                    g.drawImage((Image) game.getBox(coord).image,
+                            coord.x * IMAGE_SIZE, coord.y * IMAGE_SIZE, this);
                 }
             }
         };
         /* Установка размеров панели с помощью класса Dimension. */
-        panel.setPreferredSize(new Dimension(COLS * IMAGE_SIZE, ROWS * IMAGE_SIZE));
+        panel.setPreferredSize(new Dimension(Ranges.getSize().x * IMAGE_SIZE,
+                Ranges.getSize().y * IMAGE_SIZE));
         /* Добавим панель. */
         add(panel);
     }
