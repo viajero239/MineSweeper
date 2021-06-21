@@ -5,6 +5,8 @@ import sweeper.Ranges;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /* Наследование JFrame необходимо для создания простого оконного приложения. */
 public class JavaSweeper extends JFrame {
@@ -35,15 +37,15 @@ public class JavaSweeper extends JFrame {
         /* Автоматическое завершение выполнения программы при нажатии на крестик. */
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Java Sweeper");
-        /* Выравнивание окна по центру. */
-        setLocationRelativeTo(null);
         setResizable(false);
         /* С помощью метода setVisible делаем окно видимым. */
         setVisible(true);
-        /* Установка иконки программы. */
-        setIconImage(getImage("icon"));
         /* Выравнивание размера окна, чтобы поместились все объекты. */
         pack();
+        /* Выравнивание окна по центру. */
+        setLocationRelativeTo(null);
+        /* Установка иконки программы. */
+        setIconImage(getImage("icon"));
     }
 
     private void initPanel() {
@@ -59,6 +61,28 @@ public class JavaSweeper extends JFrame {
                 }
             }
         };
+        /* Добавление мышечного адаптера. */
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int x = e.getX() / IMAGE_SIZE;
+                int y = e.getY() / IMAGE_SIZE;
+                Coord coord = new Coord(x, y);
+                /* getButton() возвращает тип нажатой кнопки
+                 * MouseEvent.BUTTON1 - левая кнопка мыши */
+                if (e.getButton() == MouseEvent.BUTTON1)
+                    game.pressLeftButton(coord);
+                /* MouseEvent.BUTTON3 - правая кнопка мыши */
+                if (e.getButton() == MouseEvent.BUTTON3)
+                    game.pressRightButton(coord);
+                /* MouseEvent.BUTTON2 - средняя кнопка мыши
+                 * start() перезапускает программу */
+                if (e.getButton() == MouseEvent.BUTTON2)
+                    game.start();
+                /* Перерисовка панели для отображения изменений. */
+                panel.repaint();
+            }
+        });
         /* Установка размеров панели с помощью класса Dimension. */
         panel.setPreferredSize(new Dimension(Ranges.getSize().x * IMAGE_SIZE,
                 Ranges.getSize().y * IMAGE_SIZE));

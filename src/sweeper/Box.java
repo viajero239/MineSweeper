@@ -19,4 +19,9 @@ public enum Box {
 
     /* Object позволяет не привязываться к конкретной реализации. */
     public Object image;
+
+    // this.ordinal() - порядковый номер текущего элемента в перечислении
+    Box getNextNumberBox() {
+        return Box.values()[this.ordinal() + 1];
+    }
 }
