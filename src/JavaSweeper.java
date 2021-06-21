@@ -10,20 +10,24 @@ import java.awt.event.MouseEvent;
 
 /* Наследование JFrame необходимо для создания простого оконного приложения. */
 public class JavaSweeper extends JFrame {
-    private final int COLS = 9;
-    private final int ROWS = 9;
     private final int IMAGE_SIZE = 50;
-    private final int BOMBS = 10;
-    private Game game;
+    private final Game game;
     private JPanel panel;
+    /* метка-сообщение */
+    private JLabel label;
 
     /* Конструктор игры. */
     private JavaSweeper() {
+        int BOMBS = 10;
+        int ROWS = 9;
+        int COLS = 9;
         game = new Game(COLS, ROWS, BOMBS);
         game.start();
         /* Подгрузка изображений. */
         setImages();
-        /* Сначала инициализируем панель. */
+        /* Сначала инициализируем метку. */
+        initLabel();
+        /* Потом инициализируем панель. */
         initPanel();
         initFrame();
     }
@@ -31,6 +35,12 @@ public class JavaSweeper extends JFrame {
     public static void main(String[] args) {
         /* Создаём новый экземпляр класса. */
         new JavaSweeper();
+    }
+
+    private void initLabel() {
+        label = new JLabel("Welcome!");
+        /* Прикрепляем метку вниз. */
+        add(label, BorderLayout.SOUTH);
     }
 
     private void initFrame() {
@@ -79,6 +89,8 @@ public class JavaSweeper extends JFrame {
                  * start() перезапускает программу */
                 if (e.getButton() == MouseEvent.BUTTON2)
                     game.start();
+                /* Установка на метку нового текста. */
+                label.setText(getMessage());
                 /* Перерисовка панели для отображения изменений. */
                 panel.repaint();
             }
@@ -88,6 +100,14 @@ public class JavaSweeper extends JFrame {
                 Ranges.getSize().y * IMAGE_SIZE));
         /* Добавим панель. */
         add(panel);
+    }
+
+    private String getMessage() {
+        return switch (game.getState()) {
+            case PLAYED -> "Think twice!";
+            case BOMBED -> "You lose!";
+            case WINNER -> "Congratulations!";
+        };
     }
 
     private void setImages() {
